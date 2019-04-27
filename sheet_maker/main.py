@@ -1,3 +1,4 @@
+from time import time, asctime, localtime
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -32,7 +33,8 @@ def main(_file: str) -> int:
 
     cool_print(f'\nAnswer sheets will be available in: {ANSWER_SHEETS_DIR_PATH}', style='result')
 
-    cool_print(f'\n\nInitializing program...', style='info')
+    _current_time = asctime(localtime(time()))
+    cool_print(f'\n\nInitializing program...[{_current_time}]', style='info')
     
     if png_template_exists(f'{TEMPLATE_DIRECTORY}/{_data["template"]}'):
         cool_print_decoration('ERROR: Found template in .pdf format.\nConverting template to .png format...', 'danger')
