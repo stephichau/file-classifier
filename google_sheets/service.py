@@ -57,7 +57,8 @@ class GoogleSheets:
     def authorize_credentials(self):
         http = httplib2.Http()
         self._http = self._credentials.authorize(http)
-    def create_service(self):
+
+    def create_service(self) -> None:
         """
         Creates callable Google service.
         :param http: authorization
@@ -66,7 +67,7 @@ class GoogleSheets:
         """
         discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
         if self._type == 'SHEETS':
-            self._service = discovery.build(
+            service = discovery.build(
                 'sheets', 'v4', http=self._http, discoveryServiceUrl=discoveryUrl).spreadsheets().values()
 
             def __service_sheets(_range, extract=True):
@@ -77,7 +78,7 @@ class GoogleSheets:
                 :return: array of elements resulting from api call
                 """
                 try:
-                    result = self._service.get(spreadsheetId=SPREADSHEET_ID, range=_range).execute()[
+                    result = service.get(spreadsheetId=SPREADSHEET_ID, range=_range).execute()[
                         'values']
                 except HttpError as e:
                     cool_print_decoration(
@@ -86,9 +87,9 @@ class GoogleSheets:
                 else:
                     return result[0] if extract else result
 
-            return __service_sheets
+            self._service = __service_sheets
         else:
-            self._service = discovery.build('script', 'v1', http=self._http).scripts()
+            service = discovery.build('script', 'v1', http=self._http).scripts()
 
             def __service_scripts(_range):
                 """
@@ -97,10 +98,60 @@ class GoogleSheets:
                 :return: array of elements resulting from api call
                 """
                 script_name = 'getNotes'  # spreadsheet script function name
-                return self._service.run(body={'function': script_name, 'parameters': [SPREADSHEET_ID, _range]}, scriptId=GET_NOTES_API).execute()['response']['result'][0]
+                return service.run(body={'function': script_name, 'parameters': [SPREADSHEET_ID, _range]}, scriptId=GET_NOTES_API).execute()['response']['result'][0]
 
-            return __service_scripts
+            self._service = __service_scripts
+    
+    def get_header_range(self, information_cell='A1') -> str:
+        header_range = self._service(information_cell)
+        return header_range[0] if header_range else None
+    
+    def get_next_range(self, header_range: str) -> int:
+        """
+        Yields next range to look for
+        :param header_range: String that represents start and end range from spreadsheet. Ex: A1:B20
+        :return: Yields next range
+        """
+        start, end = header_range.split(':')
+        next_num = int(start[-1]) + 1
+        start = start[:1]
+        end = end[:1]
+        while True:
+            yield ':'.join(['{0}{1}'.format(start, next_num), '{0}{1}'.format(end, next_num)])
+            next_num += 1
+    
+    def get_row_number(self, column_row_range):
+        index = 0
+        column_row_range = column_row_range.split(':')[0]
+        while column_row_range[index:][0].isalpha():
+            index += 1
+        return column_row_range[index:]
+    
+    def fetch_data(self):
+        header_range = self.get_header_range()
+        range_generator = self.get_next_range(header_range)
+        students_data = {}
+        key_error = False
 
+        while not key_error:
+            nxt = next(range_generator)
+            row = self.get_row_number(nxt)
+            if (int(row) % 90 == 0):
+                # API limit requests: 100 requests per 100s per user
+                cool_print_decoration(
+                    'Too many requests. Going to sleep...', style='info')
+                time.sleep(100)
+                cool_print_decoration('Ready to work again!', style='result')
+            try:
+                data = self._service(nxt)
+                print(data)
+                if len(data) > 1:
+                    student_name = data[0]
+                    student_qr_array = data[1:]
+                    students_data[student_name] = student_qr_array
+            except KeyError:
+                cool_print_decoration('Done with API.', style='result')
+                key_error = True
 
 if __name__ == '__main__':
     google_sheets = GoogleSheets(_type='SHEETS')
