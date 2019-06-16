@@ -1,0 +1,6 @@
+{
+  "evaluation_name": "i1",
+  "course": "IIC2333",
+  "evaluation_sheet_id": "",
+  "student_sheet_id": ""
+}

@@ -1,0 +1,7 @@
+import json
+
+
+
+GET_NOTES_API, EVALUATION_NAME, SHEET_ID = '', '', 0
+
+SPREADSHEET_ID=''
