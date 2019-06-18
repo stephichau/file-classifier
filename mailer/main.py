@@ -1,9 +1,8 @@
 from .mail_handler import Mailer, Email
 
-def main(sender='iic2333', evaluation='I1'):
+def main(sender='iic2333', evaluation='I1', attachments=[('.', 'mail_handler.py')]):
     mailer = Mailer(server='localhost', sender=sender)
     
-    attachments = [('.', 'mail_handler.py')]
     receiver_list = ['schau@uc.cl']
     bbc_list = []
     cc_list = []
@@ -15,6 +14,7 @@ def main(sender='iic2333', evaluation='I1'):
     
     mailer.send_mail(email._email, mail_list)
     
+    mailer.stop_server()
 
 if __name__ == '__main__':
     main()
