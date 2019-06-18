@@ -2,10 +2,11 @@ from PIL import Image, ImageDraw, ImageFont
 from utils.log import progress
 
 FONT_SIZE = 80
+FONT_STYLE = { 'CourierNew' : 'Courier New.ttf', 'Arial': 'arial.ttf' }
 
 def add_text_img(_template: Image, left: int, _data: str) -> Image:
     draw = ImageDraw.Draw(_template)
-    fnt = ImageFont.truetype('arial.ttf', int(FONT_SIZE/1.5))
+    fnt = ImageFont.truetype(FONT_STYLE['CourierNew'], int(FONT_SIZE/1.5))
     draw.text((left, FONT_SIZE), _data, font=fnt, fill="black")
     return _template
 
