@@ -9,8 +9,7 @@ from oauth2client import tools
 from oauth2client.file import Storage
 from googleapiclient.errors import HttpError
 from itertools import zip_longest
-import time
-import json
+from time import sleep
 from utils.log import cool_print_decoration
 try:
     import argparse
@@ -18,7 +17,7 @@ try:
 except ImportError:
     flags = None
 from config import CLIENT_SECRET_FILE, SCOPES, APPLICATION_NAME
-from params import GET_NOTES_API, SPREADSHEET_ID, EVALUATION_NAME, SHEET_ID
+from params import COURSE_NAME, EVALUATION_NAME, SPREADSHEET_ID
 
 class GoogleSheets:
     def __init__(self, _type='', *args, **kw):
@@ -26,6 +25,11 @@ class GoogleSheets:
         self._type = _type
         self._http = None
         self._service = None
+        self._students_data = []
+    
+    @property
+    def students_data(self):
+        return self._students_data
     
     def get_credentials(self):
         """
@@ -98,7 +102,7 @@ class GoogleSheets:
                 :return: array of elements resulting from api call
                 """
                 script_name = 'getNotes'  # spreadsheet script function name
-                return service.run(body={'function': script_name, 'parameters': [SPREADSHEET_ID, _range]}, scriptId=GET_NOTES_API).execute()['response']['result'][0]
+                return service.run(body={'function': script_name, 'parameters': [SPREADSHEET_ID, _range]}).execute()['response']['result'][0]
 
             self._service = __service_scripts
     
@@ -132,7 +136,7 @@ class GoogleSheets:
         range_generator = self.get_next_range(header_range)
         students_data = {}
         key_error = False
-
+        data: list
         while not key_error:
             nxt = next(range_generator)
             row = self.get_row_number(nxt)
@@ -140,18 +144,19 @@ class GoogleSheets:
                 # API limit requests: 100 requests per 100s per user
                 cool_print_decoration(
                     'Too many requests. Going to sleep...', style='info')
-                time.sleep(100)
+                sleep(100)
                 cool_print_decoration('Ready to work again!', style='result')
             try:
                 data = self._service(nxt)
                 print(data)
                 if len(data) > 1:
-                    student_name = data[0]
-                    student_qr_array = data[1:]
-                    students_data[student_name] = student_qr_array
+                    student_id = data[0]
+                    student_array = data[1:]
+                    students_data[student_id] = student_array
             except KeyError:
                 cool_print_decoration('Done with API.', style='result')
                 key_error = True
+        self._students_data = students_data
 
 if __name__ == '__main__':
     google_sheets = GoogleSheets(_type='SHEETS')
