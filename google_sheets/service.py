@@ -12,17 +12,23 @@ from itertools import zip_longest
 from time import sleep
 from utils.log import cool_print_decoration
 from .config import CLIENT_SECRET_FILE, SCOPES, APPLICATION_NAME
-from .params import COURSE_NAME, EVALUATION_NAME, SPREADSHEET_ID
+from .params import get_params
 
 flags = None
 
 class GoogleSheets:
-    def __init__(self, _type='', *args, **kw):
+    SPREADSHEET_ID = ('', '', '')
+    def __init__(self, _type='', sheets_data='', spreadsheet_id='', *args, **kw):
         self._credentials = self.get_credentials()
         self._type = _type
         self._http = None
         self._service = None
         self._students_data = []
+        if (spreadsheet_id): GoogleSheets.SPREADSHEET_ID = spreadsheet_id
+        if (not spreadsheet_id and sheets_data): self.set_initial_global_params(sheets_data)
+    def set_initial_global_params(self, sheets_data):
+        params = get_params(file_data=sheets_data)
+        GoogleSheets.SPREADSHEET_ID = params['evaluation_sheet_id']
     
     @property
     def students_data(self):
@@ -79,7 +85,7 @@ class GoogleSheets:
                 :return: array of elements resulting from api call
                 """
                 try:
-                    result = service.get(spreadsheetId=SPREADSHEET_ID, range=_range).execute()[
+                    result = service.get(spreadsheetId=GoogleSheets.SPREADSHEET_ID, range=_range).execute()[
                         'values']
                 except HttpError as e:
                     cool_print_decoration(
@@ -99,7 +105,7 @@ class GoogleSheets:
                 :return: array of elements resulting from api call
                 """
                 script_name = 'getNotes'  # spreadsheet script function name
-                return service.run(body={'function': script_name, 'parameters': [SPREADSHEET_ID, _range]}).execute()['response']['result'][0]
+                return service.run(body={'function': script_name, 'parameters': [GoogleSheets.SPREADSHEET_ID, _range]}).execute()['response']['result'][0]
 
             self._service = __service_scripts
     

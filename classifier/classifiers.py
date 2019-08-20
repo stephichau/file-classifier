@@ -14,17 +14,18 @@ class ClassifierWrapper:
         self.student_list = student_list
         self.file_list = file_list
     
-    def classify_data(self, _type):
+    def classify_data(self, ocr):
         """
-        Applies pytesseract.image_to_string for each Image instance found if _type == text
-        Applies other classifier depending on _type
+        Applies pytesseract.image_to_string for each Image instance found if ocr == text
+        Applies other classifier depending on ocr
         """
-        if (_type == 'text'):
+        if (ocr == 'text'):
             self.pytesseract_classifier()
-        elif (_type == 'qr'):
+        elif (ocr == 'qr'):
             self.qr_classifier()
     
     def pytesseract_classifier(self):
+        # Not finished due to lack of accuracy
         student_list = []
         img_blobs = []
         for index, img_instance in enumerate(progress(self.file_list.sequence)):

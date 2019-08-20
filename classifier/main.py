@@ -7,9 +7,9 @@ from utils.directory_handler import path_exists, create_directories
 from utils.log import cool_print_decoration, progress
 
 
-def main(files_instance, student_list=[], _type=''):
+def main(files_instance, student_list=[], ocr=''):
     classifier = ClassifierWrapper(file_list=files_instance.file_list, student_list=student_list)
-    classifier.classify_data(_type=_type)
+    classifier.classify_data(ocr=ocr)
 
 if __name__ == '__main__':
     pass
