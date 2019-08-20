@@ -11,13 +11,10 @@ from googleapiclient.errors import HttpError
 from itertools import zip_longest
 from time import sleep
 from utils.log import cool_print_decoration
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
-from config import CLIENT_SECRET_FILE, SCOPES, APPLICATION_NAME
-from params import COURSE_NAME, EVALUATION_NAME, SPREADSHEET_ID
+from .config import CLIENT_SECRET_FILE, SCOPES, APPLICATION_NAME
+from .params import COURSE_NAME, EVALUATION_NAME, SPREADSHEET_ID
+
+flags = None
 
 class GoogleSheets:
     def __init__(self, _type='', *args, **kw):

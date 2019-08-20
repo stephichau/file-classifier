@@ -1,6 +1,6 @@
 import json
-from params import COURSE_NAME, EVALUATION_NAME
-from service import GoogleSheets
+from .params import COURSE_NAME, EVALUATION_NAME
+from .service import GoogleSheets
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
