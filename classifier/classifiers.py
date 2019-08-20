@@ -8,11 +8,13 @@ from utils.log import cool_print_decoration, progress
 from PIL import Image
 from pytesseract import image_to_string
 import pyocr
+from .qr_classifier import QRClassifier
 
 class ClassifierWrapper:
     def __init__(self, student_list=[], file_list=[],*args, **kw):
         self.student_list = student_list
         self.file_list = file_list
+        self.qr_classifier = QRClassifier(student_list, file_list)
     
     def classify_data(self, ocr):
         """
@@ -22,7 +24,7 @@ class ClassifierWrapper:
         if (ocr == 'text'):
             self.pytesseract_classifier()
         elif (ocr == 'qr'):
-            self.qr_classifier()
+            self.qr_classifier.classify()
     
     def pytesseract_classifier(self):
         # Not finished due to lack of accuracy
@@ -39,6 +41,3 @@ class ClassifierWrapper:
             # print(text)
             img.save(filename=f'blob-{index}.png')
             # print(image_to_string(new_image))
-    
-    def qr_classifier(self):
-        pass

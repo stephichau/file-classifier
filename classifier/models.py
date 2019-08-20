@@ -1,7 +1,11 @@
 class Student:
-    def __init__(self, student_id='', sheet_numbers=[], *args, **kw):
+    def __init__(self, student_id='', sheet_numbers=[], student_path='', *args, **kw):
         self.student_id = student_id
         self.sheet_numbers = sheet_numbers
+        self.directory = f'{student_path}/{student_id}'
+    
+    def __repr__(self):
+        return f'{self.student_id}: {self.directory}'
 
 class File:
     def __init__(self):

@@ -1,19 +1,20 @@
 from argparse import ArgumentParser
 from classifier import main as file_classifier
-from classifier.models import Files
+from classifier.models import Files, Student
 from google_sheets import main as g_sheets
 import json
 from utils.directory_handler import path_exists
 import utils.parse_arguments as p
 from utils.json_reader import read_data
 from utils.file_converter import multiple_pdf_to_png
-from utils.file_handler import check_downloaded_google_sheet_data
-from utils.log import cool_print_decoration
+from utils.file_handler import check_downloaded_google_sheet_data, create_student_instances
+from utils.log import cool_print_decoration, cool_print
 from sheet_maker import main as make
 from sys import argv
 # from testing.setup import *
 
 def classify(file_name: str):
+    ## Set initial params
     with open(file_name, 'r') as f:
         f = json.load(f)
     course = f['course']
@@ -22,16 +23,21 @@ def classify(file_name: str):
     ocr = f['ocr']
     sheet_id = f['evaluation_sheet_id']
     g_sheets_file = f'results/{course}/{evaluation}'
+    if (not check_downloaded_google_sheet_data(g_sheets_file)):
+        g_sheets(file_save_path=g_sheets_file, sheets_data='sheets_data.txt', spreadsheet_id=sheet_id)
+    student_list = create_student_instances(f'{g_sheets_file}', Student)
+    # Iterate for each file === one question P1 / P2 ... PN
     for info in files:
-        if (not check_downloaded_google_sheet_data(g_sheets_file)):
-            g_sheets(file_save_path=g_sheets_file, sheets_data='sheets_data.txt', spreadsheet_id=sheet_id)
         question = list(info.keys())[0]
         path = info[question]
         file = Files(course_name=course, evaluation_name=evaluation, file_path=path, question_name=question)
-        cool_print_decoration(f'Processing question:{question}', style='info')
-        file_list = multiple_pdf_to_png(f_name=path)
+        cool_print_decoration(f'Processing question:{question}\nOCR: {ocr}', style='info')
+        cool_print('Transforming .pdf into .png', style='info')
+        file_list = multiple_pdf_to_png(f_name=path, save=False)
+        cool_print('Finished transforming .pdf into .png!', style='info')
         file.set_file_list(file_list)
-        file_classifier(file, ocr=ocr)
+        file_classifier(file, student_list=student_list, ocr=ocr)
+        break
 
 OPTIONS = {
     1: 'Setup test',

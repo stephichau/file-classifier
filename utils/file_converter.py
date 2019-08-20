@@ -16,7 +16,7 @@ def multiple_pdf_to_png(f_name='', save=False) -> list:
     img = Image(filename=f_name, resolution=300)
     converted = img.convert('png')
     list(map(lambda file: get_image(file[1]).save(filename=f'./TMP/page-{file[0]}.png'), enumerate(progress(converted.sequence)))) if save else None
-    return converted
+    return list(map(lambda file: get_image(file), progress(converted.sequence)))
 
 def get_image(img_instance):
     return Image(image=img_instance)
