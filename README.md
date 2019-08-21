@@ -12,7 +12,7 @@ Developed in Python 3.7, dependency modules in `requirements.txt`
 
 ```md
 [within upper level of project]
-qr_data.txt
+file_data.txt
 
 {
     "course": "nameOfCourse",
@@ -47,4 +47,29 @@ sheets_data.txt
 To get spreadsheetId:
 https://docs.google.com/spreadsheets/d/:spreadsheetId:/
 
+```
+
+### Classify Data
+
+```md
+[within upper level of project]
+scanned_data.txt
+
+{
+    "course": "nameOfCourse",
+    "evaluation": "nameOfEvaluation",
+    "files": [
+        {
+            "nameOfQuestion": "pathToScannedQuestionFile"
+        },
+        {
+            "nameOfQuestion": "pathToScannedQuestionFile"
+        },
+        .
+        .
+        .
+    ],
+    "ocr": oneOf(["qr", "text"]),
+    "evaluation_sheet_id": "google_sheet_id"
+}
 ```

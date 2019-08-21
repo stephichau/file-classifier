@@ -1,6 +1,5 @@
 import json
-from params import COURSE_NAME, EVALUATION_NAME
-from service import GoogleSheets
+from .service import GoogleSheets
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -9,7 +8,7 @@ from utils.log import cool_print_decoration
 
 STUDENTS_FILE_NAME = 'students_data.txt'
 
-def main(file_save_path='') -> int:
+def main(file_save_path='', sheets_data='', spreadsheet_id='') -> int:
     """
     :param: file_save_path: should include
         abspath/results/:course_name:/:evaluation_name:
@@ -18,7 +17,7 @@ def main(file_save_path='') -> int:
         cool_print_decoration('Information already stored in {}/{}\n\nTo update data, delete previous file.'.format(
             file_save_path, STUDENTS_FILE_NAME), style='info')
         return 0
-    google_sheets = GoogleSheets(_type='SHEETS')
+    google_sheets = GoogleSheets(_type='SHEETS', sheets_data=sheets_data, spreadsheet_id=spreadsheet_id)
     google_sheets.authorize_credentials()
     google_sheets.create_service()
     cool_print_decoration('Connection with API successful.', style='result')
@@ -40,4 +39,4 @@ def main(file_save_path='') -> int:
 
 
 if __name__ == '__main__':
-    main(file_save_path='results/{0}/{1}'.format(COURSE_NAME, EVALUATION_NAME))
+    pass
