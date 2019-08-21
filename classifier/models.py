@@ -8,8 +8,18 @@ class Student:
         return f'{self.student_id}: {self.directory}'
 
 class File:
-    def __init__(self):
-        pass
+    def __init__(self, w_image, question, number, *args):
+        self.w_image = w_image
+        self.question = question
+        self.number = number
+        
+    @property
+    def name(self):
+        return f'{self.question}-{self.number}.pdf'
+    
+    def save(self, student_directory):
+        path = f'{student_directory}/{self.name}'
+        self.w_image.save(filename=path)
 
 class Files:
     def __init__(self, course_name='', evaluation_name= '', file_path='', question_name='', *args, **kw):

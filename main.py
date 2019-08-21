@@ -37,7 +37,6 @@ def classify(file_name: str):
         cool_print('Finished transforming .pdf into .png!', style='info')
         file.set_file_list(file_list)
         file_classifier(file, student_list=student_list, ocr=ocr)
-        break
 
 OPTIONS = {
     1: 'Setup test',

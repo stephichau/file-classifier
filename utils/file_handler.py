@@ -17,3 +17,6 @@ def create_student_instance(student_class, student_id: str, sheet_numbers: list,
 def create_student_instances(results_path, student_class) -> list:
     student_data = get_student_data(results_path)
     return [create_student_instance(student_class, student_id, student_data[student_id], results_path) for student_id in student_data]
+
+def get_qr_sheet_number(qr_data: str) -> str:
+    return qr_data.split('_')[-1]
