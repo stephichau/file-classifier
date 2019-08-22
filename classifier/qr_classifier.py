@@ -19,34 +19,47 @@ class QRClassifier:
         self.student_list = student_list
         self.file_list = files_instance.file_list
         self.question = files_instance.question_name
-        self.misclassified_path = f'{files_instance.course_name}/{files_instance.evaluation_name}/Misclassified'
+        self.misclassified_path = f'{files_instance.result_path}/Misclassified'
         self.data_dict = {'missed': []}
     
     def decode_data(self):
-        ## REFACTOR
-        last_number = None
-        for index, _img in enumerate(progress(self.file_list.sequence)):          
-            img_instance = get_image(_img)
-            file_instance = File(img_instance, self.question, index)
-            if index % 2 == 1:
-                self.data_dict[last_number].append(file_instance) if (last_number) else None
-                self.data_dict['missed'].append(file_instance) if (last_number is None) else None
-                continue
-            img_bytes = asarray(bytearray(img_instance.make_blob(format='png')), dtype=uint8)
-            img = imdecode(img_bytes, IMREAD_GRAYSCALE)
+        def is_backpage(index):
+            return index % 2 == 1
+    
+        def cast_image_to_bytesarray(img_instance):
+            return asarray(bytearray(img_instance.make_blob(format='png')), dtype=uint8)
+        
+        def _decode(img):
+            last_number = None
             for qr in decode(img, symbols=[ZBarSymbol.QRCODE]):
                 qr_data = qr.data.decode('utf-8')
                 if (qr_data):
                     number = get_qr_sheet_number(qr_data)
                     if (not self.data_dict.get(number)):
                         self.data_dict[number] = []
-                    self.data_dict[number].append(file_instance)
+                    self.update_data_dict(key=number, file_instance=file_instance)
                     last_number = number
                 else:
-                    self.data_dict['missed'].append(file_instance)
+                    self.update_data_dict(key='missed', file_instance=file_instance)
                     last_number = None
+            return last_number
+        ## REFACTOR
+        last_number = None
+        for index, _img in enumerate(progress(self.file_list.sequence)):          
+            img_instance = get_image(_img)
+            file_instance = File(img_instance, self.question, index)
+            if is_backpage(index):
+                self.update_data_dict(key=last_number, file_instance=file_instance) if (last_number) else None
+                self.update_data_dict(key='missed', file_instance=file_instance) if (last_number is None) else None
+                continue
+            img_bytes = cast_image_to_bytesarray(img_instance)
+            img = imdecode(img_bytes, IMREAD_GRAYSCALE)
+            last_number = _decode(img)
             del img
             del img_bytes
+    
+    def update_data_dict(self, key, file_instance, **kw):
+        self.data_dict[key].append(file_instance)
     
     
     def classify(self):

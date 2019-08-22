@@ -22,13 +22,18 @@ class File:
         self.w_image.save(filename=path)
 
 class Files:
-    def __init__(self, course_name='', evaluation_name= '', file_path='', question_name='', *args, **kw):
+    def __init__(self, course_name='', evaluation_name= '', file_path='', question_name='', year='', semester='', *args, **kw):
         self.course_name = course_name
         self.evaluation_name = evaluation_name
         self.file_path = file_path
         self.question_name = question_name
+        self.year = year
+        self.semester = semester
         self._file_list = None
-        self.classified_file_list = []
+    
+    @property
+    def result_path(self):
+        return f'results/{self.course_name}/{self.year}-{self.semester}/{self.evaluation_name}'
     
     @property
     def file_list(self):
@@ -40,6 +45,3 @@ class Files:
         
     def set_file_list(self, f_list):
         self.file_list = f_list
-        
-    def add_classified_file_list(self, file: File):
-        self.classified_file_list.append(file)
