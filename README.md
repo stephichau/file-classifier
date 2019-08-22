@@ -56,6 +56,8 @@ https://docs.google.com/spreadsheets/d/:spreadsheetId:/
 scanned_data.txt
 
 {
+    "year": "yyyy",
+    "semester": oneOf(["1", "2"]),
     "course": "nameOfCourse",
     "evaluation": "nameOfEvaluation",
     "files": [

@@ -17,15 +17,17 @@ def classify(file_name: str):
     ## Set initial params
     with open(file_name, 'r') as f:
         f = json.load(f)
+    year = f['year']
+    semester = f['semester']
     course = f['course']
     evaluation = f['evaluation']
     files = f['files']
     ocr = f['ocr']
     sheet_id = f['evaluation_sheet_id']
-    g_sheets_file = f'results/{course}/{evaluation}'
+    g_sheets_file = f'results/{course}/{year}-{semester}/{evaluation}'
     if (not check_downloaded_google_sheet_data(g_sheets_file)):
         g_sheets(file_save_path=g_sheets_file, sheets_data='sheets_data.txt', spreadsheet_id=sheet_id)
-    student_list = create_student_instances(f'{g_sheets_file}', Student)
+    student_list = create_student_instances(g_sheets_file, Student)
     # Iterate for each file === one question P1 / P2 ... PN
     for info in files:
         question = list(info.keys())[0]
