@@ -24,7 +24,8 @@ file_data.txt
     "year": yearOfCourse,
     "section": courseSection.oneOf([1, 2, ...nSections]),
     "instructor": "instructor'sLastName",
-    "ocr": ocrToUse.oneOf(["qr", "text"])
+    "ocr": ocrToUse.oneOf(["qr", "text"]),
+    "copies": numberOfCopiesOfEachAnswerSheet -- default to 1
 }
 
 ```
