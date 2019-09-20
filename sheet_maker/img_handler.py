@@ -10,12 +10,15 @@ def add_text_img(_template: Image, left: int, _data: str) -> Image:
     draw.text((left, FONT_SIZE), _data, font=fnt, fill="black")
     return _template
 
-def composite_img(_template: Image, _data:str, _save_page=False, _save_path='') -> Image:
+def add_qr_img(_template: Image, left: int, _data: str) -> Image:
+    return _template
+
+def composite_img(_template: Image, _data: str, _save_page=False, _save_path='', ocr='qr') -> Image:
     _left = int(_template.width - FONT_SIZE * (len(_data)//1.5))
-    _template = add_text_img(_template, _left, _data)
+    _template = add_text_img(_template, _left, _data) if ocr != 'qr' else add_qr_img(_template, _left, _data)
     _template.save(f'{_save_path}/{_data}.png') if _save_page else None
     return _template
 
-def composite_multiple_images(_files: list, _save_pages=False, _save_path='') -> list:    
+def composite_multiple_images(_files: list, _save_pages=False, _save_path='', ocr='qr') -> list:    
     return list(map(lambda _img_tuple:
-        composite_img(*_img_tuple, _save_page=_save_pages, _save_path=_save_path), progress(_files)))
+        composite_img(*_img_tuple, _save_page=_save_pages, _save_path=_save_path, ocr=ocr), progress(_files)))
