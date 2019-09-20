@@ -7,6 +7,7 @@ from utils.log import cool_print_decoration, cool_print, print_invalid_file
 from utils.file_merger import pdf_merger
 from utils.file_converter import pdf_to_png
 from utils.json_reader import check_file, read_data
+from utils.file_copies import make_copies
 from utils import create_directory
 
 from .maker import png_template_exists, make_files
@@ -16,16 +17,19 @@ from PIL import Image
 
 TEMPLATE_DIRECTORY = 'TEMPLATES'
 
-def main(_file: str) -> int:
+def main(_file='', _data={}) -> int:
 
-    _data = read_data(_file) if check_file(_file) else {}
-    
-    if not _data:
-        print_invalid_file(_file)
-        return 0
+    if (_file):
+        _data = read_data(_file) if check_file(_file) else {}
+        
+        if not _data:
+            print_invalid_file(_file)
+            return 0
     
     COURSE_NAME = _data['course']
     EVALUATION = _data['evaluation']
+    OCR = _data['ocr']
+    COPIES = _data['copies'] if _data.get('copies') else 1
 
     create_directory(f'{os.getcwd()}/ANSWER_SHEETS/') if not os.path.exists(f'{os.getcwd()}/ANSWER_SHEETS/') else None
 
@@ -47,7 +51,9 @@ def main(_file: str) -> int:
     _files = make_files(_data, _save_file=False)
 
     cool_print(f'\nAdding texts to templates...', style='info')
-    _answer_sheets = composite_multiple_images(_files, _save_pages=False, _save_path=ANSWER_SHEETS_DIR_PATH)
+    _answer_sheets = composite_multiple_images(_files, _save_pages=False, _save_path=ANSWER_SHEETS_DIR_PATH, ocr=OCR)
+    
+    _answer_sheets = _answer_sheets if COPIES == 1 else make_copies(_answer_sheets, COPIES)
     
     cool_print(f'\nMerging files...[could take a while]', style='info')
     pdf_merger(_answer_sheets, f'{ANSWER_SHEETS_DIR_PATH}/compilation.pdf')
@@ -58,4 +64,4 @@ def main(_file: str) -> int:
 
 
 if __name__ == '__main__':
-    main()
+    pass
