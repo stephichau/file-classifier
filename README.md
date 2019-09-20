@@ -19,7 +19,12 @@ file_data.txt
     "evaluation": "nameOfEvaluation",
     "upper_bound": "upperBoundNumber",
     "lower_bound": "lowerBoundNumber",
-    "template": "templateNameOfAnswerSheet"
+    "template": "templateNameOfAnswerSheet",
+    "semester": semesterNumber.oneOf([1, 2]),
+    "year": yearOfCourse,
+    "section": courseSection.oneOf([1, 2, ...nSections]),
+    "instructor": "instructor'sLastName",
+    "ocr": ocrToUse.oneOf(["qr", "text"])
 }
 
 ```
