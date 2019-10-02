@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from utils.log import cool_print_decoration, cool_print, print_invalid_file
 from utils.file_merger import pdf_merger
 from utils.file_converter import pdf_to_png
+from utils.file_handler import add_number_filename
 from utils.json_reader import check_file, read_data
 from utils.file_copies import make_copies
 from utils import create_directory
@@ -56,9 +57,10 @@ def main(_file='', _data={}) -> int:
     _answer_sheets = _answer_sheets if COPIES == 1 else make_copies(_answer_sheets, COPIES)
     
     cool_print(f'\nMerging files...[could take a while]', style='info')
-    pdf_merger(_answer_sheets, f'{ANSWER_SHEETS_DIR_PATH}/compilation.pdf')
+    save_path_file = add_number_filename(f'{ANSWER_SHEETS_DIR_PATH}', 'compilation')
+    pdf_merger(_answer_sheets, save_path_file)
 
-    cool_print(f'\nDone!', style='info')
+    cool_print(f'\nDone!\nSaved as: {save_path_file}', style='info')
 
     return 1
 

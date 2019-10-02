@@ -1,5 +1,6 @@
 import os
 from json import load
+from utils.directory_handler import path_exists
 
 def check_downloaded_google_sheet_data(g_sheets_file) -> bool:
     file = f'{g_sheets_file}/students_data.txt'
@@ -20,3 +21,11 @@ def create_student_instances(results_path, student_class) -> list:
 
 def get_qr_sheet_number(qr_data: str) -> str:
     return qr_data.split('_')[-1]
+
+def add_number_filename(path: str, filename: str) -> str:
+    new_filename = filename
+    count = 1
+    while (path_exists(f'{path}/{new_filename}.pdf')):
+        new_filename = f'{filename}-{count}'
+        count += 1
+    return f'{new_filename}.pdf'
