@@ -1,0 +1,7 @@
+{
+    "course": "IIC2333",
+    "evaluation": "I1",
+    "upper_bound": "1",
+    "lower_bound": "10",
+    "template": "TEMPLATES/template"
+}
