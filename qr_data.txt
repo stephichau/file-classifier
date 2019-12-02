@@ -1,0 +1,13 @@
+{
+    "course": "IIC2333",
+    "evaluation": "midterm",
+    "upper_bound": "76",
+    "lower_bound": "1",
+    "template": "template_IIC2333",
+    "semester": 2,
+    "year": 2019,
+    "section": 1,
+    "instructor": "Ruz",
+    "ocr": "qr",
+    "copies": 4 
+}
