@@ -3,7 +3,7 @@ Pillow==5.2.0
 PyPDF2==1.26.0
 pyzbar==0.1.7
 Wand==0.4.4
-opencv-contrib-python==3.4.2.17
+opencv-contrib-python==3.4.7.28
 numpy==1.16.0
 tqdm==4.31.1
 qrcode==6.0
